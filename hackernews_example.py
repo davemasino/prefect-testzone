@@ -3,10 +3,8 @@ import pandas as pd
 from prefect import flow, task
  
 @task
-def hackernews_top_story_ids(url):
-    top_story_ids = requests.get(
-        url
-    ).json()
+def hackernews_top_story_ids():
+    top_story_ids = requests.get("https://hacker-news.firebaseio.com/v0/topstories.json").json()
     return top_story_ids[:10]
 
 @task
@@ -22,9 +20,9 @@ def hackernews_top_stories(ids):
     return df
 
 @flow
-def hn_pipeline():
-    url = "https://hacker-news.firebaseio.com/v0/topstories.json"
-    ids = hackernews_top_story_ids(url)
+def hackernews_flow():
+    ids = hackernews_top_story_ids()
     df = hackernews_top_stories(ids)
-    
-print(hn_pipeline())
+    print(df)
+
+hackernews_flow()
